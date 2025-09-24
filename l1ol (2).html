@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brain Parts Lookup</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #f2f4f8;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      color: #6a1b9a;
+      margin-bottom: 2rem;
+    }
+
+    #searchBox {
+      display: block;
+      margin: 0 auto 2rem auto;
+      padding: 0.8rem;
+      width: 80%;
+      max-width: 400px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+      outline: none;
+      transition: border 0.3s;
+    }
+    #searchBox:focus {
+      border-color: #6a1b9a;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: linear-gradient(145deg, #ffffff, #e8eaf6);
+      border-radius: 15px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      padding: 1rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+
+    .card h2 {
+      font-size: 1.2rem;
+      color: #6a1b9a;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .no-results {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #999;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 Brain Parts Lookup</h1>
+  <input type="text" id="searchBox" placeholder="Type a number, brain part, or keyword...">
+
+  <div class="grid" id="results"></div>
+
+  <script>
+    const data = [
+      { number: 1, term: "Frontal Lobe", definition: "The largest part of the brain. Responsible for planning, decision-making, voluntary muscle movements, and problem-solving." },
+      { number: 2, term: "Parietal Lobe", definition: "Processes sensations and allows you to interpret touch, temperature, pain, and pressure. Provides spatial awareness and understanding of your body’s position in relation to your surroundings." },
+      { number: 3, term: "Temporal Lobe", definition: "Processes auditory information such as sound and speech. Stores memories. Allows object and facial recognition as well as language understanding." },
+      { number: 4, term: "Occipital Lobe", definition: "Allows you to process color, depth, and distance. Shares visual information to other parts of the brain to process." },
+      { number: 5, term: "Cerebellum", definition: "Located on the back of your head. Coordinates muscles. Maintains balance and posture." },
+      { number: 6, term: "Motor Cortex", definition: "Allows you to plan, control, and execute voluntary movements. Helps initiate complex actions." },
+      { number: 7, term: "Sensory Cortex", definition: "Processes and integrates sensory information, such as touch, sight,smell,sound and taste." },
+      { number: 8, term: "Corpus Callosum", definition: "Functions like a bridge. Nerve fibers that allow the brain to connect the left and right hemispheres. Plays a role in how you think, remember, and coordinate movements." },
+      { number: 9, term: "Thalamus", definition: "Main relay station for the brain. All senses except smell must be processed through here before getting sent to the cerebral cortex. Plays a role in sleep, consciousness, and memory." },
+      { number: 10, term: "Hypothalamus", definition: "The brain’s control center. Regulates temperature and manages hormones." },
+      { number: 11, term: "Pituitary Gland", definition: "Produces hormones which regulate normal bodily functions." },
+      { number: 12, term: "Medulla", definition: "Controls things like breathing, heart rate and blood pressure. Link between the brain and the spinal cord, which makes it important for motor functions." },
+      { number: 13, term: "Hippocampus", definition: "Involved in forming new memories and long-lasting ones, plays a part in navigation. Manages responses to certain memories, like rewards and punishments." },
+      { number: 14, term: "Limbic System", definition: "Regulates emotions, memory, motivation and basic survival instincts. Crucial for storing memories." },
+      { number: 15, term: "Brain Stem", definition: "Connects cerebrum to spinal cord. Relays sensory and motor functions to the rest of the body." },
+      { number: 16, term: "Reticular Formation", definition: "Coordinates things like sleep schedule, consciousness, attention and motor control. Acts as a filter for sensory information." },
+      { number: 17, term: "Amygdala", definition: "Processing emotions and the flight or fight response. It is the brain's threat detection." },
+      { number: 18, term: "Broca's Area", definition: "Helps make thoughts become fluent spoken words. Helps with grammar and the way we construct sentences." },
+      { number: 19, term: "Wernicke's Area", definition: "Language comprehension. Holds the mental representation of sounds, which helps distinguish different words." },
+      { number: 20, term: "Pons", definition: "A relay of sensory and motor functions. Helps to regulate breathing, managing sleep cycles and movement." },
+      { number: 21, term: "Visual Cortex", definition: "Receives and processes information from the eyes. Enables the ability to see different colours, see movement and help understand depth." },
+      { number: 22, term: "Auditory Cortex", definition: "Processes all auditory information. Is necessary to understanding language." },
+      { number: 23, term: "Angular Gyrus", definition: "Takes in information for things like reading, writing and spatial awareness. Uses information from other sensory inputs to comprehend concepts and other information." }
+    ];
+
+    const searchBox = document.getElementById('searchBox');
+    const resultsDiv = document.getElementById('results');
+
+    function displayResults(items) {
+      resultsDiv.innerHTML = '';
+      if (items.length === 0) {
+        resultsDiv.innerHTML = '<div class="no-results">No results found.</div>';
+        return;
+      }
+
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h2>#${item.number} - ${item.term}</h2>
+          <p>${item.definition}</p>
+        `;
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    searchBox.addEventListener('input', () => {
+      const query = searchBox.value.toLowerCase();
+      const filtered = data.filter(item =>
+        item.number.toString().includes(query) ||
+        item.term.toLowerCase().includes(query) ||
+        item.definition.toLowerCase().includes(query)
+      );
+      displayResults(filtered);
+    });
+
+    // Show all results initially
+    displayResults(data);
+  </script>
+</body>
+</html>
